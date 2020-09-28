@@ -56,5 +56,6 @@ class ServerThread(private val socket: Socket) : Thread() {
         dataInputStream.close()
         dataOutputStream.close()
         socket.close()
+        removeSelf()
     }
 }

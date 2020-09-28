@@ -10,7 +10,6 @@ import javafx.scene.layout.VBox
 import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
 import tornadofx.*
-import tornadofx.Stylesheet.Companion.label
 import java.io.ByteArrayInputStream
 import java.net.Socket
 import java.util.*
@@ -134,26 +133,26 @@ class MyChatView : View("MyChat") {
     }
 
     fun appendMessage(payload: Payload) {
-        if (payload.image != null) {
-            val image = Base64.getDecoder().decode(payload.image)
-            image?.let {
-                val imagez = Image(ByteArrayInputStream(it))
-                chatBubbles.add(
-                    imageview(imagez)
-                )
-            }
-        } else chatBubbles.add(bubble(payload))
+        if (payload.image == null) chatBubbles.add(bubble(payload))
         myScrollPane.hvalue = 1.0
     }
 
-    fun showDisconnectDialogAndExit() {
+    fun showDisconnectDialogAndExit(s: String = "Disconnected") {
         Platform.runLater {
-            alert(Alert.AlertType.INFORMATION, "Disconnected!", "Disconnected!", ButtonType.OK)
+            alert(Alert.AlertType.INFORMATION, s, buttons = arrayOf(ButtonType.OK))
             exitProcess(0)
         }
     }
 
+    fun showDialog(s: String) {
+        Platform.runLater {
+            alert(Alert.AlertType.INFORMATION, s, buttons = arrayOf(ButtonType.OK))
+        }
+    }
+
     fun appendImage(sender: String, image: Image, time: Date) {
+        println(sender + "  " + tfUsername.text)
+        if (sender == tfUsername.text) return
         chatBubbles.add(
             vbox {
                 paddingAll = 8.0

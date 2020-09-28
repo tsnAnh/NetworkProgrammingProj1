@@ -46,13 +46,17 @@ object Server {
     fun deliverMessageToAll(senderThread: ServerThread? = null, payload: Payload) {
         for (serverThread in clients) {
             try {
-                payload.message?.let {
-                    if (!payload.message.contains(words.joinToString(prefix = "(?i)", separator = "|").toRegex())) {
-                        serverThread.sendMessage(payload)
-                    } else {
+                if (payload.message != null) {
+                    if (senderThread == serverThread) {
+                        continue
+                    }
+                    if (payload.message.contains(words.joinToString(prefix = "(?i)", separator = "|").toRegex())) {
                         senderThread?.closeSocket()
+                        continue
                     }
                 }
+
+                serverThread.sendMessage(payload)
             } catch (_: SocketException) {
                 clients.remove(serverThread)
                 println("removed")

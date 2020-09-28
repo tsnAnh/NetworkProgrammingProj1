@@ -27,8 +27,8 @@ class ClientThread(private val view: MyChatView, private val socketMessage: Sock
             }
         } catch (sto: SocketTimeoutException) {
             view.showDisconnectDialogAndExit()
-        } catch (e: Exception) {
-            error(e)
+        } catch (e: EOFException) {
+            view.showDisconnectDialogAndExit("Ban da bi da' ra khoi phong :v")
         }
     }
 
@@ -37,6 +37,9 @@ class ClientThread(private val view: MyChatView, private val socketMessage: Sock
             with(dataOutputStream) {
                 writeObject(adapter.toJson(payload))
                 flush()
+            }
+            if (payload.image != null) {
+                view.showDialog("Ban da gui file thanh cong")
             }
         } catch (e: Exception) {
             error(e)
